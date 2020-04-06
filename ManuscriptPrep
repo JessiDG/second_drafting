@@ -1,0 +1,114 @@
+#the purpose of this program is to process text files to make them manuscript formatted
+
+import datetime
+
+class ManuscriptPrep:
+
+    def __init__(self, filename):
+        self.file = open(filename)
+        self.yourList = self.file.readlines()
+
+    def make_chapter_file(self, chapter_indicator):
+        chapter_list = open("chapter_titles.txt", "w")
+        chapter_list.write(str(datetime.datetime.now()) + '\n\n')
+        word_count = 0
+        for i in self.yourList:
+            for word in i.split():
+                if word != '\n':
+                    word_count += 1
+            if chapter_indicator in i:
+                chapter_list.write(i + "Word count: " + str(word_count)+'\n\n')
+                new_word = '**' + i + '**'
+                word_count = 0
+
+    def highlight_chapters(self, chapter_indicator):
+        updated_str = ""
+        text_file = open("edited_text.txt", "w")
+        for i in self.yourList:
+            if chapter_indicator in i:
+                new_word = '**' + i + '**'
+                text_file.write(new_word)
+                updated_str += new_word + ' '
+            else:
+                updated_str += i
+                text_file.write(i)
+        return updated_str
+
+    def newlines_to_tabs(self):
+        updated_str = ""
+        text_file = open("edited_text.txt", "w")
+        for i in self.yourList:
+            prev = i
+            if i == '\n' and prev != '\t':
+                text_file.write('\t')
+                updated_str += '\t' + ' '
+            else:
+                updated_str += i
+                text_file.write(i)
+        # self.file = open('edited_text.txt')
+        # for i in self.file:
+        #     if i == '\t\t':
+        #         text_file.write('\t')
+        #         updated_str += '\t' + ' '
+        #     else:
+        #         updated_str += i
+        #         text_file.write(i)
+        return updated_str
+
+    def breaks_to_pounds(self):
+        updated_str = ""
+        text_file = open("edited_text.txt", "w")
+        for i in self.yourList:
+            if i == '--\n':
+                text_file.write('#')
+                updated_str += '#' + ' '
+            else:
+                updated_str += i
+                text_file.write(i)
+        return updated_str
+
+    def main_char_name_frequency(self, name0, name1, name2):
+        name0_count = 0
+        name1_count = 0
+        name2_count = 0
+        for i in self.yourList:
+            for word in i.split():
+                if word == name0:
+                    name0_count += 1
+                if word == name1:
+                    name1_count += 1
+                if word == name2:
+                    name2_count += 1
+        return "Below are the names of your main characters and their frequency: \n" \
+               + str(name0) + ": " + str(name0_count) + '\n' \
+               + str(name1) + ": " + str(name1_count) + '\n' \
+               + str(name2) + ": " + str(name2_count)
+
+    def do_everything(self, chapter_indicator):
+        text_file = open("edited_text.txt", "w")
+        self.make_chapter_file(chapter_indicator)
+        self.highlight_chapters(chapter_indicator)
+        self.newlines_to_tabs()
+        self.breaks_to_pounds()
+
+    def __str__(self):
+        text_file = open("edited_text.txt", "w")
+        return_string = ""
+        for i in self.yourList:
+            text_file.write(i)
+            return_string += i
+        self.file.close()
+        text_file.close()
+        return return_string
+
+if __name__ == "__main__":
+    text = 'EBR-1.1.txt'
+    mp = ManuscriptPrep(text)
+    # print(mp)
+    print(mp.make_chapter_file('Ch '))
+    # print(mp.highlight_chapters('Ch '))
+    # print(mp.newlines_to_tabs())
+    # print(mp.breaks_to_pounds())
+    # print(mp.do_everything())
+    print(mp.main_char_name_frequency('Brian', 'Dr Antares', 'Aaron'))
+
